@@ -291,16 +291,22 @@
             transform: translateY(-2px);
         }
 
-        /* Responsive */
+        /* Mobile optimizations */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
             }
             
             .sidebar {
                 width: 100%;
                 padding: 1rem;
                 order: 2;
+                min-height: auto;
+                flex-shrink: 0;
+                background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             }
             
             .profile {
@@ -308,14 +314,29 @@
                 display: flex;
                 align-items: center;
                 gap: 1rem;
-                margin-bottom: 1rem;
+                margin-bottom: 0.5rem;
             }
             
             .profile-img {
-                width: 60px;
-                height: 60px;
+                width: 50px;
+                height: 50px;
                 margin: 0;
-                font-size: 1.5rem;
+                font-size: 1.25rem;
+                flex-shrink: 0;
+            }
+            
+            .profile h2 {
+                font-size: 1.125rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .profile .subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .status {
+                margin: 0.5rem 0;
+                font-size: 0.8rem;
             }
             
             .features {
@@ -324,7 +345,139 @@
             
             .chat-container {
                 order: 1;
-                height: 70vh;
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .chat-header {
+                padding: 1rem;
+                flex-shrink: 0;
+            }
+            
+            .chat-header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .chat-header p {
+                font-size: 0.8rem;
+            }
+            
+            .chat-messages {
+                flex: 1;
+                padding: 1rem;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                min-height: 0;
+            }
+            
+            .message {
+                max-width: 90%;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .chat-input {
+                padding: 1rem;
+                flex-shrink: 0;
+                background: white;
+                border-top: 1px solid #e5e7eb;
+                /* Evita que o teclado empurre a interface */
+                position: relative;
+                z-index: 10;
+            }
+            
+            .input-container {
+                gap: 0.5rem;
+            }
+            
+            #messageInput {
+                padding: 0.75rem;
+                font-size: 16px; /* Evita zoom no iOS */
+                border-radius: 1rem;
+                min-height: 40px;
+                max-height: 100px;
+            }
+            
+            #sendButton {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+            
+            .welcome-message {
+                padding: 2rem 1rem;
+            }
+            
+            .welcome-message h2 {
+                font-size: 1.125rem;
+            }
+            
+            .welcome-message p {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .cta-button {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9rem;
+                border-radius: 1.5rem;
+                /* Melhor área de toque */
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+        
+        /* Melhorias para touch */
+        @media (max-width: 768px) and (hover: none) {
+            /* Remove hover effects em touch devices */
+            #sendButton:hover {
+                transform: none;
+            }
+            
+            .cta-button:hover {
+                transform: none;
+            }
+            
+            /* Aumenta área de toque */
+            .message.user, .message.bot {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Melhora scroll momentum no iOS */
+            .chat-messages {
+                -webkit-overflow-scrolling: touch;
+                overflow-scrolling: touch;
+            }
+        }
+        
+        /* Para telas muito pequenas */
+        @media (max-width: 480px) {
+            .chat-messages {
+                padding: 0.75rem;
+            }
+            
+            .message {
+                max-width: 95%;
+                padding: 0.625rem 0.875rem;
+                font-size: 0.875rem;
+            }
+            
+            .chat-header {
+                padding: 0.75rem;
+            }
+            
+            .chat-input {
+                padding: 0.75rem;
+            }
+            
+            .sidebar {
+                padding: 0.75rem;
             }
         }
     </style>
@@ -398,25 +551,62 @@
 
     <script>
         let conversationStarted = false;
+        let isMobile = window.innerWidth <= 768;
 
+        // Detectar se é mobile
+        function checkMobile() {
+            isMobile = window.innerWidth <= 768;
+        }
+
+        // Ajustar altura do textarea
         function adjustTextareaHeight(textarea) {
             textarea.style.height = 'auto';
-            const maxHeight = 120;
+            const maxHeight = isMobile ? 100 : 120;
             const newHeight = Math.min(textarea.scrollHeight, maxHeight);
             textarea.style.height = newHeight + 'px';
         }
 
+        // Melhorar scroll no mobile
+        function smoothScrollToBottom() {
+            const messagesContainer = document.getElementById('chatMessages');
+            if (isMobile) {
+                // Scroll suave no mobile
+                messagesContainer.scrollTo({
+                    top: messagesContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            } else {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
         function startConversation() {
             conversationStarted = true;
-            document.querySelector('.welcome-message').style.display = 'none';
-            document.getElementById('messageInput').disabled = false;
-            document.getElementById('sendButton').disabled = false;
-            document.getElementById('messageInput').focus();
+            const welcomeMsg = document.querySelector('.welcome-message');
+            
+            // Animação de fade out
+            welcomeMsg.style.transition = 'opacity 0.3s ease-out';
+            welcomeMsg.style.opacity = '0';
+            
+            setTimeout(() => {
+                welcomeMsg.style.display = 'none';
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendButton').disabled = false;
+                
+                // Focus com delay no mobile para evitar problemas
+                if (isMobile) {
+                    setTimeout(() => {
+                        document.getElementById('messageInput').focus();
+                    }, 100);
+                } else {
+                    document.getElementById('messageInput').focus();
+                }
+            }, 300);
             
             // Primeira mensagem do bot
             setTimeout(() => {
                 addBotMessage("Perfeito! Me conta: qual é o seu negócio e qual o maior desafio que você está enfrentando para gerar mais vendas online? 🎯");
-            }, 1000);
+            }, 800);
         }
 
         function addMessage(content, isUser = false) {
@@ -425,8 +615,20 @@
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
             messageDiv.textContent = content;
             
+            // Animação de entrada
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(10px)';
+            messageDiv.style.transition = 'all 0.3s ease-out';
+            
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Trigger animação
+            requestAnimationFrame(() => {
+                messageDiv.style.opacity = '1';
+                messageDiv.style.transform = 'translateY(0)';
+            });
+            
+            setTimeout(smoothScrollToBottom, 100);
             
             return messageDiv;
         }
@@ -434,22 +636,33 @@
         function addBotMessage(content) {
             showTypingIndicator();
             
+            const typingTime = isMobile ? 1200 : 1500;
             setTimeout(() => {
                 hideTypingIndicator();
                 addMessage(content, false);
-            }, 1500 + Math.random() * 1000); // Simula tempo de digitação variável
+            }, typingTime + Math.random() * 800);
         }
 
         function showTypingIndicator() {
             const indicator = document.getElementById('typingIndicator');
             indicator.style.display = 'block';
+            indicator.style.opacity = '0';
+            indicator.style.transition = 'opacity 0.3s ease-in';
             
-            const messagesContainer = document.getElementById('chatMessages');
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            requestAnimationFrame(() => {
+                indicator.style.opacity = '1';
+            });
+            
+            setTimeout(smoothScrollToBottom, 100);
         }
 
         function hideTypingIndicator() {
-            document.getElementById('typingIndicator').style.display = 'none';
+            const indicator = document.getElementById('typingIndicator');
+            indicator.style.opacity = '0';
+            
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 300);
         }
 
         async function sendMessage() {
@@ -457,6 +670,11 @@
             const message = input.value.trim();
             
             if (!message || !conversationStarted) return;
+            
+            // Haptic feedback no mobile (se suportado)
+            if (isMobile && navigator.vibrate) {
+                navigator.vibrate(50);
+            }
             
             // Adiciona mensagem do usuário
             addMessage(message, true);
@@ -486,16 +704,20 @@
                 const data = await response.json();
                 
                 // Mostra resposta do bot
-                showTypingIndicator();
+                addBotMessage(data.response);
+                
+                // Reabilita input
                 setTimeout(() => {
-                    hideTypingIndicator();
-                    addMessage(data.response, false);
-                    
-                    // Reabilita input
                     input.disabled = false;
                     document.getElementById('sendButton').disabled = false;
-                    input.focus();
-                }, 1500 + Math.random() * 1000);
+                    
+                    if (isMobile) {
+                        // No mobile, só foca se o usuário não está rolando
+                        setTimeout(() => input.focus(), 100);
+                    } else {
+                        input.focus();
+                    }
+                }, 1000);
                 
             } catch (error) {
                 console.error('Erro:', error);
@@ -505,7 +727,7 @@
                 // Reabilita input
                 input.disabled = false;
                 document.getElementById('sendButton').disabled = false;
-                input.focus();
+                if (!isMobile) input.focus();
             }
         }
 
@@ -521,10 +743,33 @@
             }
         });
 
+        // Previnir zoom no input em iOS
+        if (isMobile) {
+            document.getElementById('messageInput').addEventListener('focus', function() {
+                this.style.fontSize = '16px';
+            });
+        }
+
+        // Ajustar interface quando orientação muda
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                checkMobile();
+                const textarea = document.getElementById('messageInput');
+                adjustTextareaHeight(textarea);
+                smoothScrollToBottom();
+            }, 300);
+        });
+
         // Auto-resize textarea on window resize
         window.addEventListener('resize', () => {
+            checkMobile();
             const textarea = document.getElementById('messageInput');
             adjustTextareaHeight(textarea);
+        });
+
+        // Inicialização
+        window.addEventListener('load', () => {
+            checkMobile();
         });
     </script>
 </body>
