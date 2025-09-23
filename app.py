@@ -25,7 +25,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'dev_secret_key_change_in_production')
 CORS(app)
 
 # Configurações
-GROQ_API_KEY = os.getenv('GROQ_API_KEY', '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')
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 DATABASE_URL = os.getenv('DATABASE_URL', 'leads.db')
 
 class LeadManager:
