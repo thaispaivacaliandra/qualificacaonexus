@@ -1,0 +1,43 @@
+# Ambiente Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Variáveis de ambiente
+.env
+
+# Banco de dados local
+*.db
+*.sqlite
+*.sqlite3
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Flask
+instance/
+.webassets-cache
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+temp/
