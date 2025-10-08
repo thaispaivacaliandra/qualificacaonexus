@@ -933,7 +933,7 @@ def admin_leads():
         return f"Erro ao carregar leads: {e}", 500
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 8000))
+    port = int(os.getenv('PORT', 7860))
     debug = os.getenv('FLASK_ENV') != 'production'
     
     print("🚀 SDR CHATBOT DO GUSTAVO")
