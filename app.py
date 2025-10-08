@@ -26,7 +26,8 @@ CORS(app)
 
 # Configurações
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-DATABASE_URL = os.getenv('DATABASE_URL', 'leads.db')
+os.makedirs('/tmp', exist_ok=True)
+DATABASE_URL = os.getenv('DATABASE_URL', '/tmp/leads.db')
 
 class LeadManager:
     """Gerencia operações de banco de dados para leads - SQLite e PostgreSQL"""
