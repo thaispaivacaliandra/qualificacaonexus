@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🚀 Gustavo - Especialista em Aceleração Digital</title>
+    <title>Nexus AI - Assistente Virtual da Clínica</title>
     <style>
         :root {
             /* Light Color Palette */
@@ -591,9 +591,9 @@
         <!-- Header -->
         <div class="chat-header">
             <div class="header-content">
-                <div class="avatar">G</div>
+                <div class="avatar">N</div>
                 <div class="header-info">
-                    <h1>Gustavo</h1>
+                    <h1>Nexus AI</h1>
                     <div class="status">
                         <div class="status-dot"></div>
                         <span class="status-text">Online agora</span>
@@ -605,34 +605,33 @@
         <!-- Messages or Welcome -->
         <div class="messages-container" id="messagesContainer">
             <div class="welcome-state" id="welcomeState">
-                <h2 class="welcome-title">Como posso ajudar?</h2>
-                <p class="welcome-subtitle">Especialista em aceleração digital. Vamos descobrir como turbinar seus resultados online.</p>
-                
+                <h2 class="welcome-title">Bem-vindo(a)!</h2>
+                <p class="welcome-subtitle">Sou a assistente virtual da clínica. Como posso te ajudar hoje?</p>
+
                 <div class="suggestions">
-                    <div class="suggestion-card" onclick="startWithSuggestion('Quero aumentar as vendas do meu e-commerce')">
-                        <div class="suggestion-title">Medir ROI digital
-                        </div>
-                        <div class="suggestion-desc">Saiba exatamente quanto cada canal retorna</div>
+                    <div class="suggestion-card" onclick="startWithSuggestion('Quero agendar uma consulta')">
+                        <div class="suggestion-title">Agendar consulta</div>
+                        <div class="suggestion-desc">Marque sua consulta com nossos especialistas</div>
                     </div>
-                    
-                    <div class="suggestion-card" onclick="startWithSuggestion('Preciso automatizar meu processo de vendas')">
-                        <div class="suggestion-title">Automatizar vendas</div>
-                        <div class="suggestion-desc">Sistemas que vendem 24/7</div>
+
+                    <div class="suggestion-card" onclick="startWithSuggestion('Quanto custa a consulta?')">
+                        <div class="suggestion-title">Valores e convênios</div>
+                        <div class="suggestion-desc">Saiba sobre preços e planos aceitos</div>
                     </div>
-                    
-                    <div class="suggestion-card" onclick="startWithSuggestion('Quero melhorar meus resultados digitais')">
-                        <div class="suggestion-title">Melhorar performance</div>
-                        <div class="suggestion-desc">Identifique oportunidades de crescimento no seu digital</div>
+
+                    <div class="suggestion-card" onclick="startWithSuggestion('Quais especialidades vocês atendem?')">
+                        <div class="suggestion-title">Especialidades</div>
+                        <div class="suggestion-desc">Conheça nosso corpo clínico</div>
                     </div>
-                    
-                    <div class="suggestion-card" onclick="startWithSuggestion('Preciso de um dashboard para acompanhar resultados')">
-                        <div class="suggestion-title">Tracking comportamental</div>
-                        <div class="suggestion-desc">Veja exatamente o que seus clientes fazem até comprar</div>
+
+                    <div class="suggestion-card" onclick="startWithSuggestion('Preciso de informações sobre um procedimento')">
+                        <div class="suggestion-title">Procedimentos</div>
+                        <div class="suggestion-desc">Informações sobre exames e tratamentos</div>
                     </div>
                 </div>
 
                 <button class="cta-button" onclick="startConversation()">
-                    <span>Começar análise gratuita</span>
+                    <span>Iniciar atendimento</span>
                     <span>→</span>
                 </button>
             </div>
@@ -705,24 +704,47 @@
             
             // Bot's first message
             setTimeout(() => {
-                addBotMessage("Qual seu nome? E me conta: você já conhece nosso trabalho ou é a primeira vez que ouve falar da gente?");
+                addBotMessage("Olá! Seja bem-vindo(a)! Meu nome é Nexus, sou assistente virtual da clínica e vou te ajudar. Qual é o seu nome?");
             }, 800);
         }
 
-        function startWithSuggestion(suggestion) {
+        async function startWithSuggestion(suggestion) {
             if (conversationStarted) return;
-            
-            startConversation();
-            
-            // Add user message after welcome disappears
+
+            conversationStarted = true;
+            const welcomeState = document.getElementById('welcomeState');
+
+            welcomeState.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            welcomeState.style.opacity = '0';
+            welcomeState.style.transform = 'translateY(-20px)';
+
             setTimeout(() => {
+                welcomeState.style.display = 'none';
+                enableInput();
+            }, 300);
+
+            // Add user message and send to API
+            setTimeout(async () => {
                 addMessage(suggestion, true);
-                
-                // Bot response based on suggestion
-                setTimeout(() => {
-                    let response = getBotResponseForSuggestion(suggestion);
-                    addBotMessage(response);
-                }, 1200);
+                showTypingIndicator();
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: suggestion })
+                    });
+
+                    if (!response.ok) throw new Error('Network error');
+
+                    const data = await response.json();
+                    hideTypingIndicator();
+                    addMessage(data.response, false);
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTypingIndicator();
+                    addMessage('Ops, tive um problema técnico. Pode tentar novamente?', false);
+                }
             }, 400);
         }
 
