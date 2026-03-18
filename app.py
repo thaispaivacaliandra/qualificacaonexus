@@ -18,11 +18,11 @@ except ImportError:
     POSTGRES_AVAILABLE = False
 
 # Carrega variáveis de ambiente
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env'))
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'dev_secret_key_change_in_production')
-CORS(app)
+CORS(app, supports_credentials=True)
 
 # Configurações
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
@@ -560,7 +560,9 @@ def chat():
         
         session_id = session.get('session_id')
         if not session_id:
-            return jsonify({'error': 'Sessão inválida'}), 400
+            session_id = str(uuid.uuid4())
+            session['session_id'] = session_id
+            lead_manager.create_lead(session_id)
         
         # Salva mensagem do usuário
         lead_manager.save_message(session_id, 'user', user_message)
@@ -793,7 +795,12 @@ if __name__ == '__main__':
     print(f"Ambiente: {os.getenv('FLASK_ENV', 'development')}")
     print(f"Porta: {port}")
     print(f"Banco: {'PostgreSQL' if DATABASE_URL.startswith('postgresql') else 'SQLite'}")
-    print(f"Groq API: {'Configurada' if GROQ_API_KEY else 'Nao configurada'}")
+    if GROQ_API_KEY:
+        print(f"Groq API: Configurada (key: {GROQ_API_KEY[:8]}...)")
+    else:
+        print("❌ Groq API: GROQ_API_KEY não encontrada no ambiente!")
+        print(f"   .env carregado de: {os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')}")
+        print(f"   Variáveis de ambiente disponíveis: {[k for k in os.environ if 'GROQ' in k or 'API' in k]}")
     print(f"Admin: http://localhost:{port}/admin/leads")
     print(f"Chat: http://localhost:{port}")
     print("=" * 50)
