@@ -686,26 +686,41 @@
             });
         }
 
-        function startConversation() {
+        async function startConversation() {
             if (conversationStarted) return;
-            
+
             conversationStarted = true;
             const welcomeState = document.getElementById('welcomeState');
-            
-            // Hide welcome state
+
             welcomeState.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             welcomeState.style.opacity = '0';
             welcomeState.style.transform = 'translateY(-20px)';
-            
+
             setTimeout(() => {
                 welcomeState.style.display = 'none';
                 enableInput();
             }, 300);
-            
-            // Bot's first message
-            setTimeout(() => {
-                addBotMessage("Oi! Que ótimo ter você aqui! ✨ Sou a assistente virtual do Laser Studio e vou te ajudar a agendar sua avaliação gratuita de depilação a laser. Qual é o seu nome?");
-            }, 800);
+
+            // Chama a API para obter a saudação inicial (salva no banco)
+            setTimeout(async () => {
+                showTypingIndicator();
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ message: 'oi' })
+                    });
+                    if (!response.ok) throw new Error('Network error');
+                    const data = await response.json();
+                    hideTypingIndicator();
+                    addMessage(data.response, false);
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTypingIndicator();
+                    addMessage("Oi! Que ótimo ter você aqui! ✨ Qual é o seu nome?", false);
+                }
+            }, 500);
         }
 
         async function startWithSuggestion(suggestion) {
