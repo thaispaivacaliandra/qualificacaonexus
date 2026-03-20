@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Nexus AI - Assistente Virtual da Clínica</title>
+    <title>Depilação a Laser - Agende sua Avaliação Gratuita</title>
     <style>
         :root {
             /* Light Color Palette */
@@ -591,9 +591,9 @@
         <!-- Header -->
         <div class="chat-header">
             <div class="header-content">
-                <div class="avatar">N</div>
+                <div class="avatar">L</div>
                 <div class="header-info">
-                    <h1>Nexus AI</h1>
+                    <h1>Laser Studio</h1>
                     <div class="status">
                         <div class="status-dot"></div>
                         <span class="status-text">Online agora</span>
@@ -605,33 +605,33 @@
         <!-- Messages or Welcome -->
         <div class="messages-container" id="messagesContainer">
             <div class="welcome-state" id="welcomeState">
-                <h2 class="welcome-title">Bem-vindo(a)!</h2>
-                <p class="welcome-subtitle">Sou a assistente virtual da clínica. Como posso te ajudar hoje?</p>
+                <h2 class="welcome-title">Adeus pelos, para sempre!</h2>
+                <p class="welcome-subtitle">Agende sua avaliação gratuita e descubra o tratamento ideal para você.</p>
 
                 <div class="suggestions">
-                    <div class="suggestion-card" onclick="startWithSuggestion('Quero agendar uma consulta')">
-                        <div class="suggestion-title">Agendar consulta</div>
-                        <div class="suggestion-desc">Marque sua consulta com nossos especialistas</div>
+                    <div class="suggestion-card" onclick="startWithSuggestion('Quero agendar minha avaliação gratuita')">
+                        <div class="suggestion-title">Avaliação gratuita</div>
+                        <div class="suggestion-desc">Marque agora, sem compromisso</div>
                     </div>
 
-                    <div class="suggestion-card" onclick="startWithSuggestion('Quanto custa a consulta?')">
-                        <div class="suggestion-title">Valores e convênios</div>
-                        <div class="suggestion-desc">Saiba sobre preços e planos aceitos</div>
+                    <div class="suggestion-card" onclick="startWithSuggestion('Quanto custa a depilação a laser?')">
+                        <div class="suggestion-title">Valores e pacotes</div>
+                        <div class="suggestion-desc">Saiba sobre preços e parcelamento</div>
                     </div>
 
-                    <div class="suggestion-card" onclick="startWithSuggestion('Quais especialidades vocês atendem?')">
-                        <div class="suggestion-title">Especialidades</div>
-                        <div class="suggestion-desc">Conheça nosso corpo clínico</div>
+                    <div class="suggestion-card" onclick="startWithSuggestion('Quais áreas vocês fazem depilação?')">
+                        <div class="suggestion-title">Áreas disponíveis</div>
+                        <div class="suggestion-desc">Axilas, pernas, virilha e muito mais</div>
                     </div>
 
-                    <div class="suggestion-card" onclick="startWithSuggestion('Preciso de informações sobre um procedimento')">
-                        <div class="suggestion-title">Procedimentos</div>
-                        <div class="suggestion-desc">Informações sobre exames e tratamentos</div>
+                    <div class="suggestion-card" onclick="startWithSuggestion('Depilação a laser dói? Como funciona?')">
+                        <div class="suggestion-title">Como funciona</div>
+                        <div class="suggestion-desc">Tire suas dúvidas sobre o procedimento</div>
                     </div>
                 </div>
 
                 <button class="cta-button" onclick="startConversation()">
-                    <span>Iniciar atendimento</span>
+                    <span>Quero agendar minha avaliação</span>
                     <span>→</span>
                 </button>
             </div>
@@ -704,7 +704,7 @@
             
             // Bot's first message
             setTimeout(() => {
-                addBotMessage("Olá! Seja bem-vindo(a)! Meu nome é Nexus, sou assistente virtual da clínica e vou te ajudar. Qual é o seu nome?");
+                addBotMessage("Oi! Que ótimo ter você aqui! ✨ Sou a assistente virtual do Laser Studio e vou te ajudar a agendar sua avaliação gratuita de depilação a laser. Qual é o seu nome?");
             }, 800);
         }
 
