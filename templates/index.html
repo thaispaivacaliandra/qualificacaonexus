@@ -709,7 +709,7 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
-                        body: JSON.stringify({ message: 'oi' })
+                        body: JSON.stringify({ message: '__inicio__' })
                     });
                     if (!response.ok) throw new Error('Network error');
                     const data = await response.json();
